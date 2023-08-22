@@ -1,0 +1,4 @@
+server:
+  url: "caldav url"
+  user: "user name"
+  password: "user password"

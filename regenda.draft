@@ -1,0 +1,4 @@
+name=reGenda
+desc=Caldav client
+call=/opt/bin/reGenda
+imgFile=reGenda
