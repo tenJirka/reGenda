@@ -1,6 +1,0 @@
-#!/opt/bin/python3
-
-import sys
-
-sys.path.append('/opt/reGenda')
-import run
