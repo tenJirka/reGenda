@@ -1,3 +1,5 @@
+#!/opt/bin/python
+
 import datetime
 import calendar_caldav
 import pytz
