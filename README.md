@@ -1,8 +1,8 @@
-# reGenda - Caldav client for reMarkable
+# reGenda - Agenda app for reMarkable
 
 reGenda is **read only** (for now) agenda app for reMarkable tablets. I would like to add edit features, but it's in the future.
 
-**Currently, reGenda only works with caldav servers that require login, such as [Nextcloud](https://nextcloud.com/) (only tested with Nextcloud so far). Other calendars specified by url or google calendar for example are not supported and I don't guarantee they will be, but I know they might be more attractive to others.**
+**Currently, reGenda only works with caldav servers that require login, such as [Nextcloud](https://nextcloud.com/) (only tested with Nextcloud so far). Other calendars specified by url or Google calendar for example are not supported and I don't guarantee they will be, but I know they might be more attractive to others.**
 
 ## What it can do
 
@@ -34,7 +34,7 @@ Check [releases](https://github.com/tenJirka/reGenda/releases) and download pack
 opkg install "downloaded package path"
 ```
 
-All dependencies will be installed manually, but **see Config section to set up your server.**
+All dependencies will be installed manually, but **see Configuration section to set up your server.**
 
 ## Manually
 
@@ -99,11 +99,11 @@ git pull
 
 ## Configuration
 
-Server that reGegenda communicates with can't be set up from UI, so you **have to** edit config files before using it.
+Server that reGegenda communicates with can't be set up from UI, so you **have to** edit config file before using it.
 
 This should be necessary to do only once.
 
-Default location of example config is `/opt/etc/reGenda/config.yml.example`, copy that file and edit it to match your server credentials. reGenda expect your config file at `/opt/etc/reGenda/config.yml`
+Default location of example config file is `/opt/etc/reGenda/config.yml.example`, copy that file and edit it to match your server credentials. reGenda expect your config file at `/opt/etc/reGenda/config.yml`
 
 You can do this by these commands:
 
