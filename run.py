@@ -181,7 +181,6 @@ def settings(principal):
         widgets.append(Button(784, 1650, 115, 50, "English", "english", justify="right"))
         widgets.append(Button(652, 1750, 100, 50, "About", "about", justify="center"))
         output = passToSimple(widgets)[0]
-        print(output)
         if "exit" in output:
             break
         elif "calendar" in output:
@@ -328,8 +327,11 @@ def eventsToWidgets(events, start, x = 100, y=300) -> list:
         sas.append(FontSize(22))
         y = y + 30
         if event.description != "":
+            description = event.description
+            if len(description) > 220:
+                description = description[:217] + "..."
             sas.append(Justify("left"))
-            sas.append(Paragraph(x + 370, y, 700, 50, event.description))
+            sas.append(Paragraph(x + 370, y, 700, 50, description))
             for letter in event.description:
                 if letter == '\n':
                     yy = yy + 22
@@ -347,44 +349,46 @@ def eventDetails(event: calendar_caldav.Event) -> None:
     """
     Scene with details of one vent
     """
+
+
     scene = Scene()
 
     scene.add(Button(1404-int(len(LANGUAGE.back)*35*6/11)-50, 50, int(len(LANGUAGE.back)*35*6/11), 50, LANGUAGE.back, id="exit", fontSize=35, justify="right"))
 
     # Event name
-    scene.add(Label(200, 200, 1004, 100, event.name, justify="left", fontSize=70))
+    scene.add(Label(100, 200, 1004, 100, event.name, justify="left", fontSize=70))
 
     # Source calendar
-    scene.add(Label(200, 400, 200, 100, LANGUAGE.calendar, fontSize=40, justify="right"))
-    scene.add(Label(450, 400, 754, 100, event.calendar, fontSize=40, justify="left"))
+    scene.add(Label(100, 400, 200, 100, LANGUAGE.calendar, fontSize=40, justify="right"))
+    scene.add(Label(350, 400, 754, 100, event.calendar, justify="left"))
 
     # Start of event
-    scene.add(Label(200, 480, 200, 100, LANGUAGE.start, fontSize=40, justify="right"))
+    scene.add(Label(100, 480, 200, 100, LANGUAGE.start, justify="right"))
     if type(event.start) is datetime.date:
-        scene.add(Label(450, 480, 754, 100, LANGUAGE.daysOfWeek[event.start.weekday()] + " - " + str(event.start.day) + "." + str(event.start.month) + "." + str(event.start.year),\
-                        fontSize=40, justify="left"))
+        scene.add(Label(350, 480, 754, 100, LANGUAGE.daysOfWeek[event.start.weekday()] + " - " + str(event.start.day) + "." + str(event.start.month) + "." + str(event.start.year),\
+                        justify="left"))
     else:
-        scene.add(Label(450, 480, 754, 100, LANGUAGE.daysOfWeek[event.start.weekday()] + " " + str(event.start.hour).zfill(2) + ":" + str(event.start.minute).zfill(2) + " - " +\
+        scene.add(Label(350, 480, 754, 100, LANGUAGE.daysOfWeek[event.start.weekday()] + " " + str(event.start.hour).zfill(2) + ":" + str(event.start.minute).zfill(2) + " - " +\
                         str(event.start.day) + "." + str(event.start.month) + "." + str(event.start.year), fontSize=40, justify="left"))
     
     # End of event
-    scene.add(Label(200, 560, 200, 100, LANGUAGE.end, fontSize=40, justify="right"))
+    scene.add(Label(100, 560, 200, 100, LANGUAGE.end, justify="right"))
     if type(event.end) is datetime.date:
-        scene.add(Label(450, 560, 754, 100, LANGUAGE.daysOfWeek[event.end.weekday()] + " - " + str(event.end.day) + "." + str(event.end.month) + "." + str(event.end.year),\
-                        fontSize=40, justify="left"))
+        scene.add(Label(350, 560, 754, 100, LANGUAGE.daysOfWeek[event.end.weekday()] + " - " + str(event.end.day) + "." + str(event.end.month) + "." + str(event.end.year),\
+                        justify="left"))
     else:
-        scene.add(Label(450, 560, 754, 100, LANGUAGE.daysOfWeek[event.end.weekday()] + " " + str(event.end.hour).zfill(2) + ":" + str(event.end.minute).zfill(2) + " - " +\
-                        str(event.end.day) + "." + str(event.end.month) + "." + str(event.end.year), fontSize=40, justify="left"))
+        scene.add(Label(350, 560, 754, 100, LANGUAGE.daysOfWeek[event.end.weekday()] + " " + str(event.end.hour).zfill(2) + ":" + str(event.end.minute).zfill(2) + " - " +\
+                        str(event.end.day) + "." + str(event.end.month) + "." + str(event.end.year), justify="left"))
 
     # Event location
     if event.location != "":
-        scene.add(Label(200, 640, 200, 100, LANGUAGE.location, fontSize=40, justify="right"))
-        scene.add(Label(450, 640, 754, 100, event.location, fontSize=40, justify="left"))
+        scene.add(Label(100, 640, 200, 100, LANGUAGE.location, justify="right"))
+        scene.add(Label(350, 640, 754, 100, event.location, justify="left"))
     
     # Event description
     if event.description != "":
-        scene.add(Label(200, 720, 200, 100, LANGUAGE.description, fontSize=40, justify="right"))
-        scene.add(Paragraph(450, 720, 754, 1000, event.description, fontSize=40, justify="left"))
+        scene.add(Label(0, 720, 300, 100, LANGUAGE.description, justify="right"))
+        scene.add(Paragraph(350, 720, 1004, 1000, event.description, fontSize=30, justify="left"))
 
     scene.display()
 
