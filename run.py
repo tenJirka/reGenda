@@ -51,14 +51,15 @@ def createListOfLabels(items, list = None, x=50, y=150) -> list:
     
 
 
-def createButtonArray(items, name, x=50, y=150, w=150, h=50) -> list:
+def createButtonArray(items, name, x=50, y=150, fontSize=22) -> list:
     list = []
     index = 0
     for text in items:
         if list == []:
-            list.append(Button(x, y, w, h, text, id=name+str(index)))
+            list.append(FontSize(fontSize))
+            list.append(Button(x, y, int(len(text)*fontSize*6/11), fontSize+10, text, id=name+str(index)))
         else:
-            list.append(Button(list[-1].x, list[-1].y+50, list[-1].w, list[-1].h, text, id=name+str(index)))
+            list.append(Button(list[-1].x, list[-1].y+50, int(len(text)*fontSize*6/11), fontSize+10, text, id=name+str(index)))
         index = index + 1
     return list
 
@@ -118,14 +119,17 @@ def monthView(month: int, year: int):
             day = day + 1
         
         scene.add(Label(0, 300, 1404, 100, LANGUAGE.months[month-1] + " " + str(year), id="next", justify="center", fontSize=70))
-        scene.add(Button(75, 1750, 400, 50, "<<", id="previous", fontSize=50, justify="left"))
-        scene.add(Button(929, 1750, 400, 50, ">>", id="next", justify="right", fontSize=50))
+        scene.add(Button(200, 300, 160, 80, "<<", id="previous", justify="center"))
+        scene.add(Button(1044, 300, 160, 80, ">>", id="next", justify="center"))
+        scene.add(Button(1404-int(len(LANGUAGE.back)*35*6/11)-50, 50, int(len(LANGUAGE.back)*35*6/11), 50, LANGUAGE.back, id="exit", fontSize=35, justify="right"))
         scene.display()
 
         if "previous" == scene.input[0]:
             month = month - 1
         elif "next" == scene.input[0]:
             month = month + 1
+        elif "exit" == scene.input[0]:
+            return [-1, -1. -1]
         else:
             return[int(scene.input[0]), month, year]
 
@@ -166,22 +170,15 @@ def settings(principal):
             toshow.remove(event)
     while(True):
         widgets = []
-        widgets.append(Justify("left"))
-        widgets.append(FontSize(40))
-        widgets.append(Label(200, 150, 150, 400, LANGUAGE.allCals))
-        widgets.append(FontSize(30))
-        widgets = widgets + createButtonArray(principal.calendar_list, "calendar", x=250, y=widgets[-2].y + 50, w=500)
-        widgets.append(FontSize(40))
-        widgets.append(Label(200, widgets[-2].y + 150, 150, 400, LANGUAGE.calsToSee))
+        widgets.append(Label(200, 150, 150, 400, LANGUAGE.allCals, fontSize=40, justify="left"))
+        widgets = widgets + createButtonArray(principal.calendar_list, "calendar", x=250, y=widgets[-1].y + 50, fontSize=30)
+        widgets.append(Label(200, widgets[-2].y + 150, 150, 400, LANGUAGE.calsToSee, fontSize=40))
         widgets.append(FontSize(30))
         widgets = widgets + createListOfLabels(toshow, x=250, y=widgets[-2].y + 50)
-        widgets.append(Button(1200, 50, 150, 50, LANGUAGE.back, id="exit"))
-        widgets.append(Justify("center"))
-        widgets.append(Label(0, 1600, 1404, 50, LANGUAGE.language))
-        widgets.append(Justify("left"))
-        widgets.append(Button(520, 1650, 100, 50, "Czech", "czech"))
-        widgets.append(Justify("right"))
-        widgets.append(Button(784, 1650, 100, 50, "English", "english"))
+        widgets.append(Button(1404-int(len(LANGUAGE.back)*35*6/11)-50, 50, int(len(LANGUAGE.back)*35*6/11), 50, LANGUAGE.back, id="exit", justify="right"))
+        widgets.append(Label(0, 1600, 1404, 50, LANGUAGE.language, justify="center"))
+        widgets.append(Button(520, 1650, 82, 50, "Czech", "czech", justify="left"))
+        widgets.append(Button(784, 1650, 115, 50, "English", "english", justify="right"))
         widgets.append(Button(652, 1750, 100, 50, "About", "about", justify="center"))
         output = passToSimple(widgets)[0]
         print(output)
@@ -320,7 +317,7 @@ def eventsToWidgets(events, start, x = 100, y=300) -> list:
 
         sas.append(Justify("left"))
         sas.append(FontSize(40))
-        sas.append(Button(x + 350, y, 300, 50, name, id=str(i)))
+        sas.append(Button(x + 350, y, int(len(name)*40*6/11), 50, name, id=str(i)))
         sas.append(FontSize(22))
         sas.append(Justify("center"))
         sas.append(Label(x, y, 300, 50, calendar))
@@ -352,7 +349,7 @@ def eventDetails(event: calendar_caldav.Event) -> None:
     """
     scene = Scene()
 
-    scene.add(Button(1200, 50, 150, 50, LANGUAGE.back, id="exit"))
+    scene.add(Button(1404-int(len(LANGUAGE.back)*35*6/11)-50, 50, int(len(LANGUAGE.back)*35*6/11), 50, LANGUAGE.back, id="exit", fontSize=35, justify="right"))
 
     # Event name
     scene.add(Label(200, 200, 1004, 100, event.name, justify="left", fontSize=70))
@@ -409,12 +406,21 @@ def dayAgenda():
     toshow = selectCalendars(kalendar, config['toshow'])
 
     dayScene = Scene()
-    dayScene.add(Button(75, 1750, 400, 50, LANGUAGE.prevDay, id="previous", fontSize=50, justify="left"))
-    dayScene.add(Button(929, 1750, 400, 50, LANGUAGE.nextDay, id="next", justify="right", fontSize=50))
-    dayScene.add(Button(1200, 50, 500, 50, LANGUAGE.settings, id="settings", fontSize=35, justify="left"))
-    dayScene.add(Button(50, 50, 500, 50, LANGUAGE.exit, id="exit", fontSize=35, justify="left"))
-    dayScene.add(Button(500, 1750, 200, 50, LANGUAGE.today, id="today", fontSize=50, justify="left"))
-    dayScene.add(Button(800, 1750, 250, 50, LANGUAGE.jump, id="jump", fontSize=50, justify="left"))
+    dayScene.add(Button(1404 - int(len(LANGUAGE.settings)*35*6/11) - 50, 50, int(len(LANGUAGE.settings)*35*6/11), 50, LANGUAGE.settings, id="settings", fontSize=35, justify="left"))
+    dayScene.add(Button(50, 50, int(len(LANGUAGE.exit)*35*6/11), 50, LANGUAGE.exit, id="exit", fontSize=35, justify="left"))
+    dayScene.add(Button(75, 1750, int(len(LANGUAGE.prevDay)*50*6/11), 50, LANGUAGE.prevDay, id="previous", fontSize=50, justify="left"))
+    dayScene.add(Button(1404 - int(len(LANGUAGE.nextDay)*50*6/11) - 75, 1750, int(len(LANGUAGE.nextDay)*50*6/11), 50, LANGUAGE.nextDay, id="next", justify="right", fontSize=50))
+
+    # Calculating position of today and jump button to be at center
+    endOfPrevious = dayScene.widgets[-2].x + dayScene.widgets[-2].w
+    startOfNext = dayScene.widgets[-1].x
+    freeSpace = startOfNext - endOfPrevious
+    leightToday = int(len(LANGUAGE.today) * 50 * 6 / 11)
+    leightGoTo = int(len(LANGUAGE.jump) * 50 * 6 / 11)
+    spaceBetween = (freeSpace - leightGoTo - leightToday) / 3
+
+    dayScene.add(Button(endOfPrevious + spaceBetween, 1750, leightToday, 50, LANGUAGE.today, id="today", fontSize=50, justify="left"))
+    dayScene.add(Button(startOfNext - leightGoTo - spaceBetween, 1750, leightGoTo, 50, LANGUAGE.jump, id="jump", fontSize=50, justify="right"))
 
     reload = True
 
@@ -446,6 +452,9 @@ def dayAgenda():
             break
         elif "jump" == tmpDayScene.input[0]:
             pick = monthView(start.month, start.year)
+            if pick[0] == -1:
+                reload = False
+                continue
             start = datetime.date(pick[2], pick[1], pick[0])
         elif "settings" == tmpDayScene.input[0]:
             settings(kalendar)
