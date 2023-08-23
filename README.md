@@ -123,19 +123,19 @@ server:
 
 ## FAQ
 
-Maybe these section should be named "Things I would like you to knew", but it wont be so attractive, so…
+Maybe this section should be named "Things I would like you to knew", but it wont be so attractive, so…
 
 ### Why is it so slow?
 
 reGenda don't save any informations to device, so wherever you change date, it have to download events first.
 
-If the app launching very slow it can depends on multiple things.
+If the app launch is very slow it can depends on multiple things.
 
 - Your server can be slow
 - Your Internet connection can be slow
-- Try charge up your remarkable, I have suspicion that can have impact on lunch time, not sure why
+- Try charge up your remarkable, I have suspicion that it can have impact on lunch time, not sure why
 
-Lunch takes around 10 sec to me, but I experience one day when it takes below 40, and wasn't able  find out why. Time changes even when trying different account on same server.
+Lunch takes around 10 seconds to me, but I experience one day when it takes slightly below 40, and I wasn't able to find out why. Lunch time changes even when trying different account on same server.
 
 ### Why is Czech supported language
 
@@ -155,5 +155,5 @@ If you are interested in another programing languages than Python, just Google i
 
 ## Credits
 
-- [caldav](https://github.com/python-caldav/caldav) - Modules used to communicate with servers
+- [caldav](https://github.com/python-caldav/caldav) - Module used to communicate with servers
 - [rmkit](https://rmkit.dev/) - Which these app stands on
