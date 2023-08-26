@@ -119,11 +119,21 @@ def about():
     scene.add(Label(0, 400, 1404, 100, "reGenda", fontSize=100, justify="center"))
     scene.add(Label(0, 600, 1404, 100, "https://github.com/tenJirka/reGenda", fontSize=40))
     scene.add(Label(0, 670, 1404, 100, "Simple agenda app for reMarkable tablets", fontSize=40))
-    scene.add(Label(0, 720, 1404, 100, "Written by tenJirka", fontSize=30))
+    scene.add(Label(0, 730, 1404, 100, "Written by tenJirka", fontSize=30))
     scene.add(Label(0, 1000, 1404, 100, "Credits:", fontSize=50))
     scene.add(Label(0, 1100, 1404, 100, "https://github.com/python-caldav/caldav", fontSize=30))
     scene.add(Label(0, 1170, 1404, 100, "https://github.com/rmkit-dev/rmkit"))
     scene.add(Button(1200, 50, 150, 50, LANGUAGE.back, id="exit"))
+    scene.display()
+
+
+def unexpectedCrashScene():
+    """
+    Scene with unexpected crast text
+    """
+    scene = Scene(timeOut=1)
+    scene.add(Label(0, 400, 1404, 100, LANGUAGE.unexpectedCrash, fontSize=60, justify="center"))
+    scene.add(Paragraph(300, 720, 1000, 100, LANGUAGE.unexpedtedCrashReasons, fontSize=40))
     scene.display()
 
 
@@ -260,14 +270,44 @@ def getEvents(start, toshow):
     return events
 
 
-def eventsToWidgets(events, start, x = 100, y=300) -> list:
+def eventsToWidgets(events, start, x = 100, y=300, maxY=1600) -> list:
     """
     Takes list of widgets and return list of widgets that can be displayed
     """    
-    sas = []
+    widgets = []
+    widgetsSets = []
+
+    origX = x
+    origY = y
+
     i = 0
     for event in events:
-        yy = 0
+        newLineCount = 0
+        if event.description != "":
+            description = event.description
+            if len(description) > 220:
+                description = description[:217] + "..."
+
+            letterCount = 0
+            for letter in description:
+                if letter == '\n':
+                    newLineCount = newLineCount + 1
+                if newLineCount >= 8:
+                    description = description[:letterCount] + "..."
+                    break
+                letterCount = letterCount + 1
+        else:
+            description = ""
+        
+        tmpMaxY = y + 140 + newLineCount * 22
+        
+        if tmpMaxY > maxY:
+            widgetsSets.append(widgets)
+            widgets = []
+            x = origX
+            y = origY
+
+        tmpYJump = 0
         calendar = event.calendar
         if len(calendar) > 19:
             calendar = calendar[:19] + "..."
@@ -290,34 +330,32 @@ def eventsToWidgets(events, start, x = 100, y=300) -> list:
         if cas == "00:00 - 00:00":
             cas = LANGUAGE.allday
 
-        sas.append(Justify("left"))
-        sas.append(FontSize(40))
-        sas.append(Button(x + 350, y, int(len(name)*40*6/11), 50, name, id=str(i)))
-        sas.append(FontSize(22))
-        sas.append(Justify("center"))
-        sas.append(Label(x, y, 300, 50, calendar))
+        widgets.append(Justify("left"))
+        widgets.append(FontSize(40))
+        widgets.append(Button(x + 350, y, int(len(name)*40*6/11), 50, name, id=str(i)))
+        widgets.append(FontSize(22))
+        widgets.append(Justify("center"))
+        widgets.append(Label(x, y, 300, 50, calendar))
         y = y + 30
-        sas.append(FontSize(35))
-        sas.append(Justify("center"))
-        sas.append(Label(x, y, 300, 50, cas))
-        sas.append(FontSize(22))
+        widgets.append(FontSize(35))
+        widgets.append(Justify("center"))
+        widgets.append(Label(x, y, 300, 50, cas))
+        widgets.append(FontSize(22))
         y = y + 30
-        if event.description != "":
-            description = event.description
-            if len(description) > 220:
-                description = description[:217] + "..."
-            sas.append(Justify("left"))
-            sas.append(Paragraph(x + 370, y, 700, 50, description))
-            for letter in event.description:
-                if letter == '\n':
-                    yy = yy + 22
+        if description != "":
+            widgets.append(Justify("left"))
+            widgets.append(Paragraph(x + 370, y, 700, 50, description))
+            tmpYJump = newLineCount * 22
         y = y + 20
         if event.location != "":
-            sas.append(Justify("center"))
-            sas.append(Label(x, y, 300, 50, location))
-        y = y+60+yy
+            widgets.append(Justify("center"))
+            widgets.append(Label(x, y, 300, 50, location))
+        y = y + 60 + tmpYJump
         i = i + 1
-    return sas
+    
+    if widgets != []:
+        widgetsSets.append(widgets)
+    return widgetsSets
 
 
 def eventDetails(event: calendar_caldav.Event) -> None:
@@ -329,7 +367,7 @@ def eventDetails(event: calendar_caldav.Event) -> None:
     scene.add(Button(1404-int(len(LANGUAGE.back)*35*6/11)-50, 50, int(len(LANGUAGE.back)*35*6/11), 50, LANGUAGE.back, id="exit", fontSize=35, justify="right"))
 
     # Event name
-    scene.add(Label(100, 200, 1004, 100, event.name, justify="left", fontSize=70))
+    scene.add(Paragraph(100, 200, 1204, 100, event.name, justify="left", fontSize=70))
 
     # Source calendar
     scene.add(Label(100, 400, 200, 100, LANGUAGE.calendar, fontSize=40, justify="right"))
@@ -386,8 +424,8 @@ def dayAgenda():
     dayScene = Scene()
     dayScene.add(Button(1404 - int(len(LANGUAGE.settings)*35*6/11) - 50, 50, int(len(LANGUAGE.settings)*35*6/11), 50, LANGUAGE.settings, id="settings", fontSize=35, justify="left"))
     dayScene.add(Button(50, 50, int(len(LANGUAGE.exit)*35*6/11), 50, LANGUAGE.exit, id="exit", fontSize=35, justify="left"))
-    dayScene.add(Button(75, 1750, int(len(LANGUAGE.prevDay)*50*6/11), 50, LANGUAGE.prevDay, id="previous", fontSize=50, justify="left"))
-    dayScene.add(Button(1404 - int(len(LANGUAGE.nextDay)*50*6/11) - 75, 1750, int(len(LANGUAGE.nextDay)*50*6/11), 50, LANGUAGE.nextDay, id="next", justify="right", fontSize=50))
+    dayScene.add(Button(75, 1750, int(len(LANGUAGE.prevDay)*50*6/11), 50, LANGUAGE.prevDay, id="previousDay", fontSize=50, justify="left"))
+    dayScene.add(Button(1404 - int(len(LANGUAGE.nextDay)*50*6/11) - 75, 1750, int(len(LANGUAGE.nextDay)*50*6/11), 50, LANGUAGE.nextDay, id="nextDay", justify="right", fontSize=50))
 
     # Calculating position of today and jump button to be at center
     endOfPrevious = dayScene.widgets[-2].x + dayScene.widgets[-2].w
@@ -403,27 +441,44 @@ def dayAgenda():
     reload = True
 
     while(True):
+        tmpDayScene = deepcopy(dayScene)
+        tmpDayScene.add(Label(100, 150, 150, 50, "" + LANGUAGE.daysOfWeek[start.weekday()]+ " " +str(start.day) + "." + str(start.month) + "." + str(start.year), justify="left", fontSize=50))
+
         if reload:
-            tmpDayScene = deepcopy(dayScene)
             events = getEvents(start, toshow)
-            tmpDayScene.add(Label(100, 150, 150, 50, "" + LANGUAGE.daysOfWeek[start.weekday()]+ " " +str(start.day) + "." + str(start.month) + "." + str(start.year), justify="left", fontSize=50))
             if events != []:
                 events.sort()
                 labels = eventsToWidgets(events, start, x=150, y=300)
             else:
                 labels = []
-                labels.append(Label(200, 300, 150, 50, LANGUAGE.noEvents))
-
-            tmpDayScene.add(labels)
+                labels.append(Label(200, 300, 150, 50, LANGUAGE.noEvents, fontSize=40))
+            currentPage = 0
+            maxPage = len(labels) - 1
 
         reload = True
 
+
+        tmpDayScene.add(labels[currentPage])
+        if maxPage > 0:
+            tmpDayScene.add(Label(0, 1650, 1404, 60, LANGUAGE.page + str(currentPage + 1) + "/" + str(maxPage + 1), fontSize=50, justify="center"))
+            if currentPage < maxPage:
+                tmpDayScene.add(Button(892, 1635, 60, 60, ">", id="nextPage", justify="center"))
+            if currentPage > 0:
+                tmpDayScene.add(Button(452, 1635, 60, 60, "<", id="previousPage", justify="center"))
+                
+
         tmpDayScene.display()
 
-        if "next" == tmpDayScene.input[0]:
+        if "nextDay" == tmpDayScene.input[0]:
             start = start + datetime.timedelta(days=1)
-        elif "previous" == tmpDayScene.input[0]:
+        elif "previousDay" == tmpDayScene.input[0]:
             start = start - datetime.timedelta(days=1)
+        elif "nextPage" == tmpDayScene.input[0]:
+            currentPage = currentPage + 1
+            reload = False
+        elif "previousPage" == tmpDayScene.input[0]:
+            currentPage = currentPage - 1
+            reload = False
         elif "today" == tmpDayScene.input[0]:
             start = datetime.date.today()
         elif "exit" == tmpDayScene.input[0]:
@@ -456,7 +511,10 @@ def loading():
 
 def main():
     loading()
-    dayAgenda()       
+    try:
+        dayAgenda()       
+    except:
+        unexpectedCrashScene()
 
 
 ######## Start of script execution ########
