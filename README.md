@@ -24,17 +24,17 @@ Maybe more, check preview or try it your self.
 
 ## From toltec
 
-Working on it
+Currently in testing branch
 
 ## From prebuild package for toltec (will be removed when it will be added to toltec)
 
 Check [releases](https://github.com/tenJirka/reGenda/releases) and download package to your reMarkable, then install it via:
 
 ```bash
-opkg install "downloaded package path"
+opkg install "path to package"
 ```
 
-All dependencies will be installed manually, but **see Configuration section to set up your server.**
+All dependencies will be installed automatically, but **see Configuration section to set up your server.**
 
 ## Manually
 
@@ -42,15 +42,17 @@ You will probably not be able to install all dependencies if you do not have ins
 
 ### Dependencies
 
+- git
 - python3
 - python3-pip
 - python3-lxml
-- git
+- simple
+- display (for reMarkable 2)
 
 Can by installed by:
 
 ```bash
-opkg install python3 python3-pip python3-lxml git
+opkg install git python3 python3-pip python3-lxml simple # display
 ```
 
 ### Installation
@@ -76,11 +78,11 @@ opkg install python3 python3-pip python3-lxml git
 
 4. **Edit your config file - see configuration section in this README.**
 
-5. Move config files to their place:
+5. Move config file to it's place:
 
    ```bash
-   mkdir /opt/etc/reGenda
-   mv config.ymp.example /opt/etx/reGenda/config.yml
+   mkdir -p /opt/etc/reGenda
+   mv config.yml.example /opt/etc/reGenda/config.yml
    ```
 
 6. Run reGenda:
@@ -103,12 +105,13 @@ Server that reGegenda communicates with can't be set up from UI, so you **have t
 
 This should be necessary to do only once.
 
-Default location of example config file is `/opt/etc/reGenda/config.yml.example`, copy that file and edit it to match your server credentials. reGenda expect your config file at `/opt/etc/reGenda/config.yml`
+Config file destination should be  `/opt/etc/reGenda/config.yml`. Default location of example config file is `/opt/etc/reGenda/config.yml.example`.
 
-You can do this by these commands:
+If you are installing from package, post install script will create config file for you if not exists yet, but you have to fill informations about your server and your user.
+
+You can do this by this command:
 
 ```bash
-cp /opt/etc/reGenda/config.yml.example /opt/etc/reGenda/config.yml
 nano /opt/etc/reGenda/config.yml # or different text editor like vim
 ```
 
@@ -147,11 +150,9 @@ That's because I  developed reGenda for my self originally and I use CalDav. It 
 
 ### I would like to develop apps for reMarkable tablet too, how?
 
-Checkout [rmkit](https://rmkit.dev/) at first place, thats where I started.
+You should checkout [remarkable.guide]( https://remarkable.guide/) at first place.
 
 reGenda uses by me written [Simple](https://rmkit.dev/apps/sas) wrapper for Python that you can find [here](https://github.com/tenJirka/rm-pySAS), or you can check similar Python module that I didn't know already exists [Carta](https://github.com/Jayy001/Carta).
-
-If you are interested in another programing languages than Python, just Google it. I cannot advise you there.
 
 ## Credits
 
