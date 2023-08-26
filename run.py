@@ -10,31 +10,6 @@ import languages
 from copy import deepcopy
 from rm_pySAS import *
 
-# Location of config file
-CONFIG_FILE = '/opt/etc/reGenda/config.yml'
-
-try:
-        with open(CONFIG_FILE, 'r') as file:
-            config = yaml.safe_load(file)
-except:
-    scene = Scene()
-    scene.add(Label(50, 50, 150, 300, languages.english.configError))
-    scene.display()
-    exit()
-
-
-# Setting up language
-if "language" not in config:
-    LANGUAGE = languages.english
-else:
-    if config['language'] == "czech":
-        LANGUAGE = languages.czech
-    elif config['language'] == "english":
-        LANGUAGE = languages.english
-    else:
-        LANGUAGE = languages.english
-
-
 
 def createListOfLabels(items, list = None, x=50, y=150) -> list:
     """
@@ -50,8 +25,10 @@ def createListOfLabels(items, list = None, x=50, y=150) -> list:
     return list
     
 
-
 def createButtonArray(items, name, x=50, y=150, fontSize=22) -> list:
+    """
+    Take list of strings and returns buttons continuously below each other
+    """
     list = []
     index = 0
     for text in items:
@@ -62,6 +39,7 @@ def createButtonArray(items, name, x=50, y=150, fontSize=22) -> list:
             list.append(Button(list[-1].x, list[-1].y+50, int(len(text)*fontSize*6/11), fontSize+10, text, id=name+str(index)))
         index = index + 1
     return list
+
 
 def daysInMonth(month: int, year: int) -> int:
     """
@@ -82,7 +60,6 @@ def monthView(month: int, year: int):
         x = 352
         deltaX = 100
         deltaY = 100
-
         today = datetime.date.today()
 
         if month > 12:
@@ -91,14 +68,14 @@ def monthView(month: int, year: int):
         elif month < 1:
             year = year - 1
             month = month + 12
-        scene = Scene()
         first = datetime.date(int(year), int(month), 1).weekday()
         day = 0
-        alldays = daysInMonth(month, year)
-        
-        
+        alldays = daysInMonth(month, year)      
+
+        scene = Scene()
         scene.add(Justify("center"))
         scene.add(FontSize(40))
+        
         i = 0
         while(i < 7):
             scene.add(Label(x+i*deltaX, y, deltaX, deltaY, LANGUAGE.daysOfWeek[i][:2]))
@@ -133,6 +110,7 @@ def monthView(month: int, year: int):
         else:
             return[int(scene.input[0]), month, year]
 
+
 def about():
     """
     About scene
@@ -146,7 +124,6 @@ def about():
     scene.add(Label(0, 1100, 1404, 100, "https://github.com/python-caldav/caldav", fontSize=30))
     scene.add(Label(0, 1170, 1404, 100, "https://github.com/rmkit-dev/rmkit"))
     scene.add(Button(1200, 50, 150, 50, LANGUAGE.back, id="exit"))
-
     scene.display()
 
 
@@ -208,11 +185,9 @@ def settings(principal):
             with open(CONFIG_FILE, 'w') as file:
                 yaml.dump(config, file)
 
-
     with open(CONFIG_FILE, 'w') as file:
             config['toshow'] = toshow
             yaml.dump(config, file)
-
 
 
 def selectCalendars(principal, names):
@@ -284,6 +259,7 @@ def getEvents(start, toshow):
                                                     calendar.name, dtstart_dt, dtend_dt, location, description))
     return events
 
+
 def eventsToWidgets(events, start, x = 100, y=300) -> list:
     """
     Takes list of widgets and return list of widgets that can be displayed
@@ -341,7 +317,6 @@ def eventsToWidgets(events, start, x = 100, y=300) -> list:
             sas.append(Label(x, y, 300, 50, location))
         y = y+60+yy
         i = i + 1
-
     return sas
 
 
@@ -349,8 +324,6 @@ def eventDetails(event: calendar_caldav.Event) -> None:
     """
     Scene with details of one vent
     """
-
-
     scene = Scene()
 
     scene.add(Button(1404-int(len(LANGUAGE.back)*35*6/11)-50, 50, int(len(LANGUAGE.back)*35*6/11), 50, LANGUAGE.back, id="exit", fontSize=35, justify="right"))
@@ -391,6 +364,7 @@ def eventDetails(event: calendar_caldav.Event) -> None:
         scene.add(Paragraph(350, 720, 1004, 1000, event.description, fontSize=30, justify="left"))
 
     scene.display()
+
 
 def dayAgenda():
     """
@@ -470,7 +444,6 @@ def dayAgenda():
             reload = False
 
 
-
 def loading():
     """
     Just place up holder.
@@ -480,8 +453,34 @@ def loading():
     scene.add(Label(0, 800, 1404, 400, LANGUAGE.loading, fontSize=40))
     scene.display()
 
+
 def main():
     loading()
     dayAgenda()       
+
+
+######## Start of script execution ########
+
+# Location of config file
+CONFIG_FILE = '/opt/etc/reGenda/config.yml'
+try:
+        with open(CONFIG_FILE, 'r') as file:
+            config = yaml.safe_load(file)
+except:
+    scene = Scene()
+    scene.add(Label(50, 50, 150, 300, languages.english.configError))
+    scene.display()
+    exit()
+
+# Setting up language
+if "language" not in config:
+    LANGUAGE = languages.english
+else:
+    if config['language'] == "czech":
+        LANGUAGE = languages.czech
+    elif config['language'] == "english":
+        LANGUAGE = languages.english
+    else:
+        LANGUAGE = languages.english
 
 main()
