@@ -253,8 +253,8 @@ def getEvents(start, toshow):
                 dtend = event.icalendar_component.get("dtend")
                 dtend_dt = dtend and dtend.dt
                 try:
-                    dtstart_dt = dtstart_dt.astimezone(pytz.timezone("Europe/Prague"))
-                    dtend_dt = dtend_dt.astimezone(pytz.timezone("Europe/Prague"))
+                    dtstart_dt = dtstart_dt.astimezone(pytz.timezone(TIMEZONE))
+                    dtend_dt = dtend_dt.astimezone(pytz.timezone(TIMEZONE))
                 except:
                     pass
                 if "LOCATION" in event.icalendar_component:
@@ -540,5 +540,10 @@ else:
         LANGUAGE = languages.english
     else:
         LANGUAGE = languages.english
+
+# Setting up timezone
+TIMEZONE = "UTC"
+if "timezone" in config:
+    TIMEZONE = config['timezone']
 
 main()

@@ -1,3 +1,4 @@
+timezone: UTC
 server:
   url: "caldav url"
   user: "user name"
