@@ -5,7 +5,7 @@ import caldav
 
 class Calendar:
     """
-    Represents one calendar that will be loaded.
+    Represents one server that will be loaded.
     """
     def __init__(self, url, user, password):
         with caldav.DAVClient(

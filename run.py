@@ -137,7 +137,7 @@ def unexpectedCrashScene():
     scene.display()
 
 
-def settings(principal):
+def settings(principals):
     """
     Settings scene
     """
@@ -152,13 +152,17 @@ def settings(principal):
         toshow = []
     else:
         toshow=config['toshow']
-    for event in toshow:
-        if event not in principal.calendar_list:
-            toshow.remove(event)
+    
+    calendar_list = [ y for x in principals for y in x.calendar_list]
+    
+    for calendar_name in toshow:
+        if calendar_name not in calendar_list:
+            toshow.remove(calendar_name)
+    
     while(True):
         widgets = []
         widgets.append(Label(200, 150, 150, 400, LANGUAGE.allCals, fontSize=40, justify="left"))
-        widgets = widgets + createButtonArray(principal.calendar_list, "calendar", x=250, y=widgets[-1].y + 50, fontSize=30)
+        widgets = widgets + createButtonArray(calendar_list, "calendar", x=250, y=widgets[-1].y + 50, fontSize=30)
         widgets.append(Label(200, widgets[-2].y + 150, 150, 400, LANGUAGE.calsToSee, fontSize=40))
         widgets.append(FontSize(30))
         widgets = widgets + createListOfLabels(toshow, x=250, y=widgets[-2].y + 50)
@@ -177,10 +181,10 @@ def settings(principal):
                     selected = word
                     break
             index = int(selected.replace('calendar', ''))
-            if principal.calendar_list[index] in toshow:
-                toshow.remove(principal.calendar_list[index])
+            if calendar_list[index] in toshow:
+                toshow.remove(calendar_list[index])
             else:
-                toshow.append(principal.calendar_list[index])
+                toshow.append(calendar_list[index])
             toshow.sort()
         elif "czech" in output:
             config['language'] = "czech"
@@ -200,13 +204,15 @@ def settings(principal):
             yaml.dump(config, file)
 
 
-def selectCalendars(principal, names):
+def selectCalendars(principals, names):
     """
     Gets lists of calendar and then initialize related calendar connections
     """
     calendars = []
-    for calendar in names:
-        calendars.append(principal.principal.calendar(name=calendar))
+    for principal in principals:
+        for calendar in names:
+            if calendar in principal.calendar_list:
+                calendars.append(principal.principal.calendar(name=calendar))
     return calendars
 
 
@@ -217,21 +223,24 @@ def connect():
     with open(CONFIG_FILE, 'r') as file:
             config = yaml.safe_load(file)
 
-    server = config['server']
-    try:
-        kalendar = calendar_caldav.Calendar(server['url'], server['user'], server['password'])
-    except caldav.lib.error.AuthorizationError:
-        scene = Scene(timeOut=1)
-        scene.add(Label(150, 150, 150, 400, LANGUAGE.loginFailed, fontSize=30))
-        scene.display()
-        exit()
-    except:
-        scene = Scene()
-        scene.add(Label(150, 150, 150, 400, LANGUAGE.somethingError, fontSize=30))
-        scene.add(Button(1000, 1500, 400, 50, LANGUAGE.retry))
-        scene.display()
-        kalendar = connect()
-    return kalendar
+    servers = config['sources']
+    calendars = []
+    for server in servers:
+        try:
+            calendar = calendar_caldav.Calendar(servers[server]['url'], servers[server]['user'], servers[server]['password'])
+            calendars.append(calendar)
+        except caldav.lib.error.AuthorizationError:
+            scene = Scene(timeOut=1)
+            scene.add(Label(150, 150, 150, 400, LANGUAGE.loginFailed, fontSize=30))
+            scene.display()
+            exit()
+        except:
+            scene = Scene()
+            scene.add(Label(150, 150, 150, 400, LANGUAGE.somethingError, fontSize=30))
+            scene.add(Button(1000, 1500, 400, 50, LANGUAGE.retry))
+            scene.display()
+            calendar = connect()
+    return calendars
 
 
 def getEvents(start, toshow):
@@ -412,14 +421,14 @@ def dayAgenda():
             config = yaml.safe_load(file)
     start = datetime.date.today()
 
-    kalendar = connect()
+    principals = connect()
 
     if 'toshow' not in config:
-        settings(kalendar)
+        settings(principals)
         with open(CONFIG_FILE, 'r') as file:
             config = yaml.safe_load(file)
 
-    toshow = selectCalendars(kalendar, config['toshow'])
+    toshow = selectCalendars(principals, config['toshow'])
 
     dayScene = Scene()
     dayScene.add(Button(1404 - int(len(LANGUAGE.settings)*35*6/11) - 50, 50, int(len(LANGUAGE.settings)*35*6/11), 50, LANGUAGE.settings, id="settings", fontSize=35, justify="left"))
@@ -490,10 +499,10 @@ def dayAgenda():
                 continue
             start = datetime.date(pick[2], pick[1], pick[0])
         elif "settings" == tmpDayScene.input[0]:
-            settings(kalendar)
+            settings(principals)
             with open(CONFIG_FILE, 'r') as file:
                 config = yaml.safe_load(file)
-            toshow = selectCalendars(kalendar, config['toshow'])
+            toshow = selectCalendars(principals, config['toshow'])
         else:
             eventDetails(events[int(tmpDayScene.input[0])])         
             reload = False
@@ -529,6 +538,19 @@ except:
     scene.add(Label(50, 50, 150, 300, languages.english.configError))
     scene.display()
     exit()
+
+# Convert old style server settings to new style
+if "server" in config:
+    print("Converting old config")
+    config_old=deepcopy(config)
+    del config["server"]
+    old_server = {
+        'server': config_old['server']
+    }
+    old_server['server']['type'] = "server"
+    config['sources'] = old_server
+    with open(CONFIG_FILE, 'w') as file:
+            yaml.dump(config, file)
 
 # Setting up language
 if "language" not in config:

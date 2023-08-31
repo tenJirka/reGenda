@@ -13,6 +13,7 @@ reGenda is **read only** (for now) agenda app for reMarkable tablets. I would li
 - You can choose language of UI (only English and Czech are currently supported)
 - Fast time travel by selecting day from month based view
 - Fast return to today
+- Show events from multiple servers
 
 Maybe more, check preview or try it your self.
 
@@ -101,13 +102,13 @@ git pull
 
 ## Configuration
 
-Server that reGegenda communicates with can't be set up from UI, so you **have to** edit config file before using it.
+Servers that reGegenda communicates with can't be set up from UI, so you **have to** edit config file before using it.
 
 This should be necessary to do only once.
 
 Config file destination should be  `/opt/etc/reGenda/config.yml`. Default location of example config file is `/opt/etc/reGenda/config.yml.example`.
 
-If you are installing from package, post install script will create config file for you if not exists yet, but you have to fill informations about your server and your user.
+If you are installing from package, post install script will create config file for you if not exists yet, but you have to fill informations about your servers and your users.
 
 You can do this by this command:
 
@@ -118,10 +119,18 @@ nano /opt/etc/reGenda/config.yml # or different text editor like vim
 Your configuration file should look like this:
 
 ```yaml
-server:
-  url: "caldav url"
-  user: "user name"
-  password: "user password"
+timezone: UTC       # see https://mljar.com/blog/list-pytz-timezones/ for all available timezones
+sources:
+  Personal:         # Name of server (can be anything, but have to be unique in this config)
+    type: server    # Just keep this, it's preparation for calendars specified by url
+    user: "your user name"
+    url: "your server url"
+    password: "your password"
+  #Work:            # Another server or just different user
+  #   type: server 
+  #   user: "your user name"
+  #   url: "your server url"
+  #   password: "your password"
 ```
 
 ## FAQ

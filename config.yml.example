@@ -1,5 +1,12 @@
-timezone: UTC
-server:
-  url: "caldav url"
-  user: "user name"
-  password: "user password"
+timezone: UTC       # see https://mljar.com/blog/list-pytz-timezones/ for all available timezones
+sources:
+  Personal:         # Name of server (can be anything, but have to be unique in this config)
+    type: server    # Just keep this, it's preparation for calendars specified by url
+    user: "your user name"
+    url: "your server url"
+    password: "your password"
+  #Work:            # Another server or just different user
+  #   type: server 
+  #   user: "your user name"
+  #   url: "your server url"
+  #   password: "your password"
