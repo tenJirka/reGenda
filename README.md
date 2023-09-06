@@ -4,16 +4,18 @@ reGenda is **read only** (for now) agenda app for reMarkable tablets. I would li
 
 **Currently, reGenda only works with caldav servers that require login, such as [Nextcloud](https://nextcloud.com/) (only tested with Nextcloud so far). Other calendars specified by url or Google calendar for example are not supported and I don't guarantee they will be, but I know they might be more attractive to others.**
 
+**Please do not use calendars with the same names, this will confuse the app.**
+
 ## What it can do
 
 - Show your day based agenda
 - Show event details
-- Show events from multiple calendars (but not from multiple servers)
-- You can choose what calendar will be displayed
+- Show events from multiple calendars
+- You can choose which calendar will be displayed
 - You can choose language of UI (only English and Czech are currently supported)
 - Fast time travel by selecting day from month based view
 - Fast return to today
-- Show events from multiple servers
+- Show events from multiple caldav servers
 
 Maybe more, check preview or try it your self.
 
