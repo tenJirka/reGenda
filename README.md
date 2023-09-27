@@ -25,23 +25,19 @@ Maybe more, check preview or try it your self.
 
 # Installation
 
-## From toltec
+## From Toltec
 
-Currently in testing branch
-
-## From prebuild package for toltec (will be removed when it will be added to toltec)
-
-Check [releases](https://github.com/tenJirka/reGenda/releases) and download package to your reMarkable, then install it via:
+reGenda can be installed from Toltec by this command:
 
 ```bash
-opkg install "path to package"
+opkg install regenda
 ```
 
-All dependencies will be installed automatically, but **see Configuration section to set up your server.**
+**See configuration section, if installing for the first time.**
 
 ## Manually
 
-You will probably not be able to install all dependencies if you do not have installed toltec on your reMarkable.
+You will probably not be able to install all dependencies if you do not have installed Toltec on your reMarkable.
 
 ### Dependencies
 
@@ -51,6 +47,7 @@ You will probably not be able to install all dependencies if you do not have ins
 - python3-lxml
 - simple
 - display (for reMarkable 2)
+- some more python modules that you have to install via pip (see Installation bellow)
 
 Can by installed by:
 
