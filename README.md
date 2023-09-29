@@ -132,6 +132,8 @@ sources:
   #   password: "your password"
 ```
 
+Setting the time zone in the configuration file is optional, if not set, the TZ system variable or the system time zone will be used.
+
 ## FAQ
 
 Maybe this section should be named "Things I would like you to knew", but it wont be so attractive, so…

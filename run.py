@@ -7,6 +7,8 @@ import yaml
 import caldav
 import calendar
 import languages
+import os
+import subprocess
 from copy import deepcopy
 from rm_pySAS import *
 
@@ -539,6 +541,7 @@ except:
     scene.display()
     exit()
 
+
 # Convert old style server settings to new style
 if "server" in config:
     print("Converting old config")
@@ -552,6 +555,7 @@ if "server" in config:
     with open(CONFIG_FILE, 'w') as file:
             yaml.dump(config, file)
 
+
 # Setting up language
 if "language" not in config:
     LANGUAGE = languages.english
@@ -563,9 +567,33 @@ else:
     else:
         LANGUAGE = languages.english
 
+
 # Setting up timezone
-TIMEZONE = "UTC"
+TIMEZONE = "UTC" # default timezone that will be used when valid timezone cant be found in config or system
+INVALID_TZ = False # helper variable 
+
 if "timezone" in config:
-    TIMEZONE = config['timezone']
+    if config['timezone'] in pytz.all_timezones:
+        TIMEZONE = config['timezone']
+    else:
+        print("Timezone from config file is not valid.")
+        INVALID_TZ = True
+# fallback to system variable TZ
+elif 'TZ' in os.environ:
+    if os.environ['TZ'] in pytz.all_timezones:
+        TIMEZONE = os.environ['TZ']
+    else:
+        INVALID_TZ = True
+else:
+    INVALID_TZ = True
+
+# fallback to timedatectl command
+if INVALID_TZ:
+    TMP_TIMEZONE = subprocess.run(["timedatectl | grep Time\ zone | sed s/^\ *Time\ zone:\ // | sed s/\ .*//"],\
+                                   stdout=subprocess.PIPE, shell=True, text=True, encoding="utf-8").stdout.replace("\n", "")
+    if TMP_TIMEZONE in pytz.all_timezones:
+        TIMEZONE = TMP_TIMEZONE
+
+print("Timezone set to " + TIMEZONE)
 
 main()
