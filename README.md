@@ -3,6 +3,7 @@
 reGenda is **read only** (for now) agenda app for reMarkable tablets. I would like to add edit features, but it's in the future.
 
 **Currently, reGenda only works with caldav servers that require login, such as [Nextcloud](https://nextcloud.com/) (only tested with Nextcloud so far). Other calendars specified by url or Google calendar for example are not supported and I don't guarantee they will be, but I know they might be more attractive to others.**
+**Connection with iCloud should work, see [configuration section](https://github.com/tenJirka/reGenda#icloud) for more info.**
 
 **Please do not use calendars with the same names, this will confuse the app.**
 
@@ -33,7 +34,7 @@ reGenda can be installed from Toltec by this command:
 opkg install regenda
 ```
 
-**See configuration section, if installing for the first time.**
+**See [configuration section](https://github.com/tenJirka/reGenda#configuration), if installing for the first time.**
 
 ## Manually
 
@@ -107,7 +108,7 @@ This should be necessary to do only once.
 
 Config file destination should be  `/opt/etc/reGenda/config.yml`. Default location of example config file is `/opt/etc/reGenda/config.yml.example`.
 
-If you are installing from package, post install script will create config file for you if not exists yet, but you have to fill informations about your servers and your users.
+If you are installing from package, post install script will create config file for you if not exists yet, but you have to fill information about your servers and your users.
 
 You can do this by this command:
 
@@ -132,7 +133,19 @@ sources:
   #   password: "your password"
 ```
 
-Setting the time zone in the configuration file is optional, if not set, the TZ system variable or the system time zone will be used.
+Setting the time zone in the configuration file is optional, if not set, the TZ system variable or the system time zone will be used (since version 0.0.3).
+
+### iCloud
+Here is an example for iCloud settings.
+```yaml
+sources:
+  iCloud:         # Name of server (can be anything, but have to be unique in this config)
+    type: server    # Just keep this, it's preparation for calendars specified by url
+   url: https://caldav.icloud.com/
+   user: <your-apple-id-here>
+   password: <app-specific-password>
+```
+Thanks [@jedahan](https://github.com/jedahan) for this example. More information can be found [here](https://github.com/tenJirka/reGenda/discussions/5).
 
 ## FAQ
 
@@ -140,7 +153,7 @@ Maybe this section should be named "Things I would like you to knew", but it won
 
 ### Why is it so slow?
 
-reGenda don't save any informations to device, so wherever you change date, it have to download events first.
+reGenda don't save any information to device, so wherever you change date, it have to download events first.
 
 If the app launch is very slow it can depends on multiple things.
 
