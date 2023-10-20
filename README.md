@@ -141,9 +141,9 @@ Here is an example for iCloud settings.
 sources:
   iCloud:         # Name of server (can be anything, but have to be unique in this config)
     type: server    # Just keep this, it's preparation for calendars specified by url
-   url: https://caldav.icloud.com/
-   user: <your-apple-id-here>
-   password: <app-specific-password>
+    url: https://caldav.icloud.com/
+    user: <your-apple-id-here>
+    password: <app-specific-password>
 ```
 Thanks [@jedahan](https://github.com/jedahan) for this example. More information can be found [here](https://github.com/tenJirka/reGenda/discussions/5).
 
